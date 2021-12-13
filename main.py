@@ -3,6 +3,14 @@ from typing import Optional
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 
+from datetime import datetime
+from dotenv import dotenv_values
+
+import requests
+
+config = dotenv_values(".env")
+
+print(config)
 app = FastAPI()
 
 
@@ -11,9 +19,18 @@ def read_root():
     return {"Hello": "World"}
 
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
+@app.get("/washer")
+def washer():
+    url = "https://api.pushover.net/1/messages.json"
+
+    payload = {'user': config['PUSHOVER_USER'],
+               'message': f'im a teapot.  it is now {datetime.now()}',
+               'token': config['API_TOKEN']}
+
+    response = requests.request("POST", url, data=payload)
+
+    print(response.text)
+    return ''
 
 
 @app.get("/teapot")
