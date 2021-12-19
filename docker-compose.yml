@@ -8,3 +8,9 @@ services:
       - .:/code
   redis:
     image: "redis:alpine"
+  worker:
+    build: 
+      context: .
+      dockerfile: ./worker/Dockerfile
+    depends_on:
+      - "redis"
